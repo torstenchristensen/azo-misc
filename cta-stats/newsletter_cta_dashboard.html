@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newsletter Sponsor CTA Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root {
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f5f5;
+    --color-background-tertiary: #eeeeee;
+    --color-background-danger: #fcebeb;
+    --color-background-success: #eaf3de;
+    --color-background-warning: #faeeda;
+    --color-background-info: #e6f1fb;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #555555;
+    --color-text-tertiary: #888888;
+    --color-text-danger: #a32d2d;
+    --color-text-success: #3b6d11;
+    --color-text-warning: #854f0b;
+    --color-text-info: #185fa5;
+    --color-border-tertiary: rgba(0,0,0,0.12);
+    --color-border-secondary: rgba(0,0,0,0.25);
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --group-a: #E24B4A;
+    --group-b: #639922;
+    --group-unmatched: #888780;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background-primary: #1e1e1e;
+      --color-background-secondary: #2a2a2a;
+      --color-background-tertiary: #333333;
+      --color-background-danger: #3a1a1a;
+      --color-background-success: #1a2e0a;
+      --color-background-warning: #2e1e04;
+      --color-background-info: #0a1e3a;
+      --color-text-primary: #f0f0f0;
+      --color-text-secondary: #aaaaaa;
+      --color-text-tertiary: #777777;
+      --color-text-danger: #f09595;
+      --color-text-success: #97c459;
+      --color-text-warning: #ef9f27;
+      --color-text-info: #85b7eb;
+      --color-border-tertiary: rgba(255,255,255,0.12);
+      --color-border-secondary: rgba(255,255,255,0.25);
+    }
+  }
+  body { font-family: var(--font-sans); background: var(--color-background-secondary); color: var(--color-text-primary); margin: 0; padding: 0; font-size: 15px; line-height: 1.6; }
+  .page-header { background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 1rem 2rem; }
+  .page-header h1 { font-size: 18px; font-weight: 500; margin: 0 0 2px; }
+  .page-header p { font-size: 13px; color: var(--color-text-secondary); margin: 0; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  .file-bar { display: flex; align-items: center; gap: 10px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; }
+  .file-bar-label { font-size: 13px; color: var(--color-text-secondary); white-space: nowrap; }
+  .file-bar-path { flex: 1; font-size: 13px; color: var(--color-text-tertiary); font-family: var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: italic; }
+  .file-bar-path.loaded { color: var(--color-text-primary); font-style: normal; }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .metric { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 1rem; }
+  .metric-label { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px; }
+  .metric-value { font-size: 24px; font-weight: 500; margin: 0; }
+  .metric-sub { font-size: 11px; color: var(--color-text-tertiary); margin: 2px 0 0; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .card-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin: 0 0 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .controls { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 1.5rem; align-items: flex-end; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+  .controls label { font-size: 13px; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 4px; }
+  .controls select { font-size: 13px; padding: 5px 8px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); cursor: pointer; }
+  .slot-checks { display: flex; gap: 14px; align-items: center; }
+  .slot-check { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; user-select: none; }
+  .slot-check input { cursor: pointer; width: 14px; height: 14px; accent-color: var(--group-a); }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: var(--border-radius-md); font-weight: 500; }
+  .badge-a { background: rgba(226,75,74,0.15); color: #a32d2d; }
+  .badge-b { background: rgba(99,153,34,0.15); color: #3b6d11; }
+  .badge-unmatched { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+  .badge-slot { font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--color-background-tertiary); color: var(--color-text-tertiary); margin-left: 4px; }
+  @media (prefers-color-scheme: dark) {
+    .badge-a { background: rgba(226,75,74,0.25); color: #f09595; }
+    .badge-b { background: rgba(99,153,34,0.25); color: #97c459; }
+  }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+  .data-table th { text-align: left; padding: 7px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); font-weight: 500; color: var(--color-text-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .data-table td { padding: 7px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tbody tr:hover { background: var(--color-background-secondary); }
+  .chart-wrap { position: relative; width: 100%; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; font-size: 12px; color: var(--color-text-secondary); }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .tab-bar { display: flex; gap: 2px; margin-bottom: 1.5rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .tab { padding: 8px 16px; font-size: 13px; cursor: pointer; border: none; background: none; color: var(--color-text-secondary); border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: var(--font-sans); }
+  .tab:hover { color: var(--color-text-primary); }
+  .tab.active { color: var(--color-text-primary); border-bottom-color: var(--color-text-primary); font-weight: 500; }
+  .empty { text-align: center; padding: 3rem; color: var(--color-text-tertiary); font-size: 14px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+  .table-scroll { overflow-x: auto; }
+  .group-editor { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0; }
+  @media (max-width: 700px) { .group-editor { grid-template-columns: 1fr; } }
+  .group-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; }
+  .group-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem; }
+  .group-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+  .group-name-input { font-size: 14px; font-weight: 500; border: none; background: transparent; color: var(--color-text-primary); font-family: var(--font-sans); padding: 0; width: 100%; outline: none; border-bottom: 1px solid transparent; }
+  .group-name-input:focus { border-bottom-color: var(--color-border-secondary); }
+  .keyword-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; min-height: 28px; }
+  .keyword-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; padding: 3px 8px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
+  .keyword-tag button { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); padding: 0; font-size: 14px; line-height: 1; display: flex; align-items: center; }
+  .keyword-tag button:hover { color: var(--color-text-danger); }
+  .keyword-add { display: flex; gap: 6px; }
+  .keyword-add input { flex: 1; font-size: 13px; padding: 5px 8px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); }
+  .keyword-add input:focus { outline: none; }
+  .btn-small { font-size: 12px; padding: 5px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); cursor: pointer; font-family: var(--font-sans); white-space: nowrap; }
+  .btn-small:hover { background: var(--color-background-tertiary); }
+  .search-tool { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .search-row { display: flex; gap: 8px; margin-bottom: 0.5rem; }
+  .search-row input { flex: 1; font-size: 14px; padding: 7px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); font-family: var(--font-sans); }
+  .search-row input:focus { outline: none; }
+  .compare-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 1rem; }
+  .compare-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; }
+  .compare-label { font-size: 11px; color: var(--color-text-secondary); margin: 0 0 4px; }
+  .compare-value { font-size: 20px; font-weight: 500; margin: 0 0 2px; }
+  .compare-delta { font-size: 12px; margin: 0; }
+  .delta-better { color: var(--color-text-success); }
+  .delta-worse { color: var(--color-text-danger); }
+  .delta-neutral { color: var(--color-text-tertiary); }
+  #debugPanel { display:none; background:var(--color-background-primary); border:0.5px solid var(--color-border-secondary); border-radius:var(--border-radius-lg); padding:1rem 1.25rem; margin-bottom:1.5rem; font-size:13px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <h1>Newsletter Sponsor CTA Dashboard</h1>
+  <p>AZoNetwork — headline &amp; featured sponsor performance analysis</p>
+</div>
+<div class="container">
+
+  <div class="file-bar">
+    <span class="file-bar-label"><i class="ti ti-file-text" aria-hidden="true" style="font-size:16px;vertical-align:-2px;margin-right:4px"></i>CSV file</span>
+    <span class="file-bar-path" id="filePath">No file loaded — click Browse to select your output CSV</span>
+    <input type="file" id="csvInput" accept=".csv">
+    <button class="btn-small" onclick="document.getElementById('csvInput').click()"><i class="ti ti-folder-open" aria-hidden="true" style="font-size:14px;vertical-align:-2px;margin-right:4px"></i>Browse</button>
+    <button class="btn-small" id="reloadBtn" style="display:none" onclick="reloadCSV()"><i class="ti ti-refresh" aria-hidden="true" style="font-size:14px;vertical-align:-2px;margin-right:4px"></i>Reload</button>
+    <button class="btn-small" id="snapshotBtn" style="display:none" onclick="saveSnapshot()"><i class="ti ti-camera" aria-hidden="true" style="font-size:14px;vertical-align:-2px;margin-right:4px"></i>Save snapshot</button>
+  </div>
+
+  <div id="debugPanel"></div>
+
+  <div id="dashContent" style="display:none">
+
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title">CTA group definitions</div>
+      <div class="group-editor">
+        <div class="group-card">
+          <div class="group-card-header">
+            <div class="group-swatch" style="background:var(--group-a)"></div>
+            <input class="group-name-input" id="groupAName" value="High-commitment CTAs" oninput="render()">
+          </div>
+          <div class="keyword-list" id="groupAKeywords"></div>
+          <div class="keyword-add">
+            <input type="text" id="groupAInput" placeholder="Add keyword..." onkeydown="if(event.key==='Enter')addKeyword('A')">
+            <button class="btn-small" onclick="addKeyword('A')">Add</button>
+          </div>
+        </div>
+        <div class="group-card">
+          <div class="group-card-header">
+            <div class="group-swatch" style="background:var(--group-b)"></div>
+            <input class="group-name-input" id="groupBName" value="Passive CTAs" oninput="render()">
+          </div>
+          <div class="keyword-list" id="groupBKeywords"></div>
+          <div class="keyword-add">
+            <input type="text" id="groupBInput" placeholder="Add keyword..." onkeydown="if(event.key==='Enter')addKeyword('B')">
+            <button class="btn-small" onclick="addKeyword('B')">Add</button>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--color-text-tertiary);margin:0.75rem 0 0">Matching is case-insensitive and partial. Anything not matching either group shows as Unmatched.</p>
+    </div>
+
+    <div class="card" id="blacklistCard" style="margin-bottom:1rem">
+      <div class="card-title">CTA Blacklist</div>
+      <div class="keyword-list" id="blacklistKeywords"></div>
+      <div class="keyword-add">
+        <input type="text" id="blacklistInput" placeholder="Add blacklisted keyword..." onkeydown="if(event.key==='Enter')addBlacklistKeyword()">
+        <button class="btn-small" onclick="addBlacklistKeyword()">Add</button>
+      </div>
+      <p style="font-size:12px;color:var(--color-text-tertiary);margin:0.75rem 0 0">Sponsor entries matching these case-insensitive keywords/phrases will be excluded from all metrics, charts, and tables, and won't be saved in snapshots.</p>
+    </div>
+
+    <div class="controls">
+      <label>Period
+        <select id="periodFilter">
+          <option value="12">Last 12 months</option>
+          <option value="18" selected>Last 18 months</option>
+          <option value="24">Last 24 months</option>
+          <option value="0">All time</option>
+        </select>
+      </label>
+      <label>Newsletter
+        <select id="nlFilter"><option value="">All newsletters</option></select>
+      </label>
+      <label>Group
+        <select id="groupFilter">
+          <option value="">All groups</option>
+          <option value="A">Group A</option>
+          <option value="B">Group B</option>
+          <option value="unmatched">Unmatched</option>
+        </select>
+      </label>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <span style="font-size:13px;color:var(--color-text-secondary)">Sponsor slots</span>
+        <div class="slot-checks">
+          <label class="slot-check"><input type="checkbox" id="slotHL" checked onchange="render()"> Headline</label>
+          <label class="slot-check"><input type="checkbox" id="slotF1" checked onchange="render()"> Featured 1</label>
+          <label class="slot-check"><input type="checkbox" id="slotF2" checked onchange="render()"> Featured 2</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-grid" id="metricCards"></div>
+
+    <div class="tab-bar">
+      <button class="tab active" onclick="showTab('overview')">Overview</button>
+      <button class="tab" onclick="showTab('performance')">Performance by group</button>
+      <button class="tab" onclick="showTab('search')">CTA search &amp; compare</button>
+      <button class="tab" onclick="showTab('table')">Sponsor breakdown</button>
+    </div>
+
+    <div id="tab-overview">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">CTA group split — all selected slots</div>
+          <div class="legend" id="pieAllLegend"></div>
+          <div class="chart-wrap" style="height:200px"><canvas id="pieAll" role="img" aria-label="Donut chart of CTA group split across selected slots"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Sponsor entries by slot</div>
+          <div class="legend" id="pieSlotLegend"></div>
+          <div class="chart-wrap" style="height:200px"><canvas id="pieSlot" role="img" aria-label="Donut chart showing sponsor entry count by slot"></canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">CTA group count over time</div>
+        <div class="legend" id="trendLegend"></div>
+        <div class="chart-wrap" style="height:240px"><canvas id="trendChart" role="img" aria-label="Stacked bar chart of CTA group counts by month"></canvas></div>
+      </div>
+    </div>
+
+    <div id="tab-performance" style="display:none">
+      <div class="card">
+        <div class="card-title">Avg sponsorship click rate by group</div>
+        <div class="legend" id="clickLegend"></div>
+        <div class="chart-wrap" style="height:260px"><canvas id="clickChart" role="img" aria-label="Bar chart comparing average click rate by CTA group"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Avg unsubscribe rate by group (newsletter-level)</div>
+        <div class="legend" id="unsubLegend"></div>
+        <div class="chart-wrap" style="height:260px"><canvas id="unsubChart" role="img" aria-label="Bar chart comparing average unsubscribe rate by CTA group"></canvas></div>
+      </div>
+    </div>
+
+    <div id="tab-search" style="display:none">
+      <div class="search-tool">
+        <div class="card-title">Search CTA text and compare to baseline</div>
+        <div class="search-row">
+          <input type="text" id="ctaSearch" placeholder="Type a CTA keyword e.g. register, download, learn more..." oninput="runSearch()">
+          <button class="btn-small" onclick="document.getElementById('ctaSearch').value='';runSearch()">Clear</button>
+        </div>
+        <p style="font-size:12px;color:var(--color-text-tertiary);margin:0">Searches across all selected sponsor slots. Metrics are averaged across all matching sponsor entries.</p>
+        <div id="searchResults" style="display:none;margin-top:1rem"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">All unique CTA texts in selection — click to search</div>
+        <div id="ctaCloud" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
+    </div>
+
+    <div id="tab-table" style="display:none">
+      <div class="card">
+        <div class="card-title">Sponsor entry breakdown — one row per sponsor slot</div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:70px">Issue ID</th>
+                <th style="width:140px">Newsletter</th>
+                <th style="width:85px">Send date</th>
+                <th style="width:55px">Slot</th>
+                <th style="width:170px">CTA text</th>
+                <th style="width:80px">Group</th>
+                <th style="width:75px">Click rate</th>
+                <th style="width:70px">Unsub %</th>
+              </tr>
+            </thead>
+            <tbody id="issueTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+
+const groups = {
+  A: { keywords: ['register','book your','book now','sign up','sign-up','apply now','enrol','enroll','rsvp','attend','reserve','request a demo','book a demo','start now','watch now','access now','get started','join now','subscribe now'] },
+  B: { keywords: ['learn more','read more','find out','discover','explore','see more','view more','boost','find solution','see how','download','get your','get the','read the','see the','visit'] }
+};
+
+function groupName(g) {
+  if (g === 'A') return document.getElementById('groupAName').value || 'Group A';
+  if (g === 'B') return document.getElementById('groupBName').value || 'Group B';
+  return 'Unmatched';
+}
+
+function classifyCTA(text) {
+  if (!text || !text.trim()) return 'none';
+  const t = text.toLowerCase();
+  if (groups.A.keywords.some(k => t.includes(k))) return 'A';
+  if (groups.B.keywords.some(k => t.includes(k))) return 'B';
+  return 'unmatched';
+}
+
+function renderKeywords(g) {
+  document.getElementById(`group${g}Keywords`).innerHTML = groups[g].keywords.map(k => `
+    <span class="keyword-tag">${k}
+      <button onclick="removeKeyword('${g}','${k.replace(/'/g,"\\'")}')"><i class="ti ti-x" style="font-size:12px" aria-hidden="true"></i></button>
+    </span>`).join('');
+}
+
+function addKeyword(g) {
+  const input = document.getElementById(`group${g}Input`);
+  const kw = input.value.trim().toLowerCase();
+  if (!kw || groups[g].keywords.includes(kw)) { input.value=''; return; }
+  groups[g].keywords.push(kw);
+  renderKeywords(g);
+  reclassify();
+  render();
+  input.value = '';
+}
+
+function removeKeyword(g, kw) {
+  groups[g].keywords = groups[g].keywords.filter(k => k !== kw);
+  renderKeywords(g);
+  reclassify();
+  render();
+}
+
+let blacklist = [];
+
+function renderBlacklist() {
+  const el = document.getElementById('blacklistKeywords');
+  if (!el) return;
+  el.innerHTML = blacklist.map(k => `
+    <span class="keyword-tag">${k}
+      <button onclick="removeBlacklistKeyword('${k.replace(/'/g,"\\'")}')"><i class="ti ti-x" style="font-size:12px" aria-hidden="true"></i></button>
+    </span>`).join('');
+}
+
+function addBlacklistKeyword() {
+  const input = document.getElementById('blacklistInput');
+  const kw = input.value.trim().toLowerCase();
+  if (!kw || blacklist.includes(kw)) { input.value=''; return; }
+  blacklist.push(kw);
+  renderBlacklist();
+  render();
+  input.value = '';
+}
+
+function removeBlacklistKeyword(kw) {
+  blacklist = blacklist.filter(k => k !== kw);
+  renderBlacklist();
+  render();
+}
+
+function isBlacklisted(cta) {
+  if (!cta) return false;
+  const t = cta.toLowerCase();
+  return blacklist.some(k => t.includes(k));
+}
+
+// --- Raw issue data ---
+let issueData = [];
+
+// Each "sponsor entry" is a flat record: one per sponsor slot per issue
+// { issueId, newsletter, sendDate, slot, cta, group, clickPct, unsubPct }
+function buildEntries() {
+  const useHL = document.getElementById('slotHL').checked;
+  const useF1 = document.getElementById('slotF1').checked;
+  const useF2 = document.getElementById('slotF2').checked;
+  const entries = [];
+  issueData.forEach(r => {
+    if (useHL && r.hlCTA && !isBlacklisted(r.hlCTA))  entries.push({ issueId:r.issueId, newsletter:r.newsletter, sendDate:r.sendDate, slot:'HL',  cta:r.hlCTA,  group:r.hlGroup,  clickPct:r.hlClickPct,  unsubPct:r.unsubPct });
+    if (useF1 && r.f1CTA && !isBlacklisted(r.f1CTA))  entries.push({ issueId:r.issueId, newsletter:r.newsletter, sendDate:r.sendDate, slot:'F1',  cta:r.f1CTA,  group:r.f1Group,  clickPct:r.f1ClickPct,  unsubPct:r.unsubPct });
+    if (useF2 && r.f2CTA && !isBlacklisted(r.f2CTA))  entries.push({ issueId:r.issueId, newsletter:r.newsletter, sendDate:r.sendDate, slot:'F2',  cta:r.f2CTA,  group:r.f2Group,  clickPct:r.f2ClickPct,  unsubPct:r.unsubPct });
+  });
+  return entries;
+}
+
+function reclassify() {
+  issueData.forEach(r => {
+    r.hlGroup = classifyCTA(r.hlCTA);
+    r.f1Group = classifyCTA(r.f1CTA);
+    r.f2Group = classifyCTA(r.f2CTA);
+  });
+}
+
+function getFilteredEntries() {
+  const months = parseInt(document.getElementById('periodFilter').value);
+  const nl = document.getElementById('nlFilter').value;
+  const grp = document.getElementById('groupFilter').value;
+  const cutoff = months > 0 ? new Date(Date.now() - months * 30.44 * 86400000) : null;
+  return buildEntries().filter(e => {
+    if (cutoff && e.sendDate && e.sendDate < cutoff) return false;
+    if (nl && e.newsletter !== nl) return false;
+    if (grp && e.group !== grp) return false;
+    return true;
+  });
+}
+
+// --- Utilities ---
+const COLORS = { A:'#E24B4A', B:'#639922', unmatched:'#888780' };
+let charts = {};
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+function makeChart(id, config) { destroyChart(id); charts[id] = new Chart(document.getElementById(id), config); }
+function makeLegend(id, items) {
+  document.getElementById(id).innerHTML = items.map(i =>
+    `<span><span class="legend-dot" style="background:${i.color}"></span>${i.label}</span>`).join('');
+}
+function avg(arr, key) {
+  const vals = arr.map(r => r[key]).filter(v => v !== null && !isNaN(v));
+  return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+}
+
+// --- Render ---
+function render() {
+  const entries = getFilteredEntries();
+  renderMetrics(entries);
+  const tab = document.querySelector('.tab.active').getAttribute('onclick').match(/'(\w+)'/)[1];
+  if (tab==='overview') renderOverview(entries);
+  else if (tab==='performance') renderPerformance(entries);
+  else if (tab==='search') renderSearch(entries);
+  else renderTable(entries);
+}
+
+function renderMetrics(entries) {
+  const gA = entries.filter(e=>e.group==='A');
+  const gB = entries.filter(e=>e.group==='B');
+  const gU = entries.filter(e=>e.group==='unmatched');
+  const clickAvg = avg(entries,'clickPct');
+  const unsubAvg = avg(entries,'unsubPct');
+  document.getElementById('metricCards').innerHTML = [
+    { label:'Sponsor entries', value:entries.length, sub:'in selection' },
+    { label:groupName('A'), value:gA.length, sub:entries.length?Math.round(gA.length/entries.length*100)+'% of total':'—', color:COLORS.A },
+    { label:groupName('B'), value:gB.length, sub:entries.length?Math.round(gB.length/entries.length*100)+'% of total':'—', color:COLORS.B },
+    { label:'Unmatched', value:gU.length, sub:entries.length?Math.round(gU.length/entries.length*100)+'% of total':'—', color:COLORS.unmatched },
+    { label:'Avg click rate', value:clickAvg!==null?clickAvg.toFixed(2)+'%':'—', sub:'across selection' },
+    { label:'Avg unsub rate', value:unsubAvg!==null?unsubAvg.toFixed(3)+'%':'—', sub:'newsletter-level' },
+  ].map(m=>`<div class="metric"><p class="metric-label">${m.label}</p><p class="metric-value" style="${m.color?'color:'+m.color:''}">${m.value}</p><p class="metric-sub">${m.sub}</p></div>`).join('');
+}
+
+function renderOverview(entries) {
+  const gAN=groupName('A'), gBN=groupName('B');
+  const gc={A:0,B:0,unmatched:0}, sc={HL:0,F1:0,F2:0};
+  entries.forEach(e=>{
+    gc[e.group]=(gc[e.group]||0)+1;
+    sc[e.slot]=(sc[e.slot]||0)+1;
+  });
+  const pieOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+  makeChart('pieAll',{type:'doughnut',data:{labels:[gAN,gBN,'Unmatched'],datasets:[{data:[gc.A||0,gc.B||0,gc.unmatched||0],backgroundColor:[COLORS.A,COLORS.B,COLORS.unmatched],borderWidth:0}]},options:pieOpts});
+  makeChart('pieSlot',{type:'doughnut',data:{labels:['Headline','Featured 1','Featured 2'],datasets:[{data:[sc.HL||0,sc.F1||0,sc.F2||0],backgroundColor:['#378ADD','#BA7517','#D4537E'],borderWidth:0}]},options:pieOpts});
+  makeLegend('pieAllLegend',[{color:COLORS.A,label:`${gAN} (${gc.A||0})`},{color:COLORS.B,label:`${gBN} (${gc.B||0})`},{color:COLORS.unmatched,label:`Unmatched (${gc.unmatched||0})`}]);
+  makeLegend('pieSlotLegend',[{color:'#378ADD',label:`Headline (${sc.HL||0})`},{color:'#BA7517',label:`Featured 1 (${sc.F1||0})`},{color:'#D4537E',label:`Featured 2 (${sc.F2||0})`}]);
+
+  const byMonth={};
+  entries.forEach(e=>{
+    if(!e.sendDate) return;
+    const k=e.sendDate.toISOString().slice(0,7);
+    if(!byMonth[k]) byMonth[k]={A:0,B:0,unmatched:0};
+    byMonth[k][e.group]=(byMonth[k][e.group]||0)+1;
+  });
+  const months=Object.keys(byMonth).sort();
+  makeChart('trendChart',{type:'bar',data:{labels:months,datasets:[
+    {label:gAN,data:months.map(m=>byMonth[m].A||0),backgroundColor:COLORS.A+'cc'},
+    {label:gBN,data:months.map(m=>byMonth[m].B||0),backgroundColor:COLORS.B+'cc'},
+    {label:'Unmatched',data:months.map(m=>byMonth[m].unmatched||0),backgroundColor:COLORS.unmatched+'cc'}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{autoSkip:true,maxRotation:45}},y:{stacked:true,beginAtZero:true}}}});
+  makeLegend('trendLegend',[{color:COLORS.A,label:gAN},{color:COLORS.B,label:gBN},{color:COLORS.unmatched,label:'Unmatched'}]);
+}
+
+function renderPerformance(entries) {
+  const gAN=groupName('A'), gBN=groupName('B');
+  const groupEntries=[entries.filter(e=>e.group==='A'),entries.filter(e=>e.group==='B'),entries.filter(e=>e.group==='unmatched')];
+  const labels=[gAN,gBN,'Unmatched'];
+  const bgColors=[COLORS.A,COLORS.B,COLORS.unmatched];
+
+  function compareChart(canvasId,metricKey,legendId,digits) {
+    const vals=groupEntries.map(g=>{const v=avg(g,metricKey);return v!==null?parseFloat(v.toFixed(digits)):0;});
+    makeChart(canvasId,{type:'bar',data:{labels,datasets:[{data:vals,backgroundColor:bgColors,borderWidth:0,borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{callback:v=>v.toFixed(digits)+'%'}}}}});
+    makeLegend(legendId,labels.map((l,i)=>({color:bgColors[i],label:`${l}: ${vals[i].toFixed(digits)}%`})));
+  }
+  compareChart('clickChart','clickPct','clickLegend',2);
+  compareChart('unsubChart','unsubPct','unsubLegend',3);
+}
+
+function renderSearch(entries) {
+  const ctaCounts={};
+  entries.forEach(e=>{ if(e.cta) ctaCounts[e.cta]=(ctaCounts[e.cta]||0)+1; });
+  const sorted=Object.entries(ctaCounts).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('ctaCloud').innerHTML=sorted.map(([cta,count])=>
+    `<span class="keyword-tag" style="cursor:pointer" onclick="document.getElementById('ctaSearch').value='${cta.replace(/'/g,"\\'")}';runSearch()" title="${count} occurrence${count!==1?'s':''}">${cta} <span style="color:var(--color-text-tertiary);font-size:10px">${count}</span></span>`
+  ).join('');
+  runSearch();
+}
+
+function runSearch() {
+  const q=document.getElementById('ctaSearch').value.trim().toLowerCase();
+  const res=document.getElementById('searchResults');
+  if(!q){res.style.display='none';return;}
+
+  const entries=getFilteredEntries();
+  const baseline={click:avg(entries,'clickPct'),unsub:avg(entries,'unsubPct'),n:entries.length};
+  const matches=entries.filter(e=>e.cta&&e.cta.toLowerCase().includes(q));
+
+  if(!matches.length){
+    res.style.display='block';
+    res.innerHTML=`<p style="color:var(--color-text-tertiary);font-size:13px">No CTAs matching "<strong>${q}</strong>" found in current filter.</p>`;
+    return;
+  }
+
+  const mClick=avg(matches,'clickPct'), mUnsub=avg(matches,'unsubPct');
+  const matchingCTAs=[...new Set(matches.map(e=>e.cta))];
+  const slotCounts={HL:matches.filter(e=>e.slot==='HL').length,F1:matches.filter(e=>e.slot==='F1').length,F2:matches.filter(e=>e.slot==='F2').length};
+
+  function deltaHtml(match,base,digits,lowerBetter){
+    if(match===null||base===null) return '<span class="delta-neutral">—</span>';
+    const diff=match-base;
+    const better=lowerBetter?diff<0:diff>0;
+    const cls=Math.abs(diff)<0.0001?'delta-neutral':better?'delta-better':'delta-worse';
+    return `<span class="${cls}">${diff>0?'+':''}${diff.toFixed(digits)}pp vs baseline</span>`;
+  }
+
+  res.style.display='block';
+  res.innerHTML=`
+    <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 6px">
+      <strong style="color:var(--color-text-primary)">${matches.length}</strong> sponsor entr${matches.length!==1?'ies':'y'} matching "<strong style="color:var(--color-text-primary)">${q}</strong>"
+      out of ${baseline.n} total
+      — HL: ${slotCounts.HL}, F1: ${slotCounts.F1}, F2: ${slotCounts.F2}
+    </p>
+    <p style="font-size:12px;color:var(--color-text-tertiary);margin:0 0 4px">Matching CTAs: ${matchingCTAs.map(c=>`<em>${c}</em>`).join(', ')}</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <p class="compare-label">Avg click rate</p>
+        <p class="compare-value">${mClick!==null?mClick.toFixed(2)+'%':'—'}</p>
+        <p class="compare-delta">${deltaHtml(mClick,baseline.click,2,false)}</p>
+        <p class="compare-delta" style="font-size:11px;color:var(--color-text-tertiary)">Baseline: ${baseline.click!==null?baseline.click.toFixed(2)+'%':'—'}</p>
+      </div>
+      <div class="compare-card">
+        <p class="compare-label">Avg unsub rate</p>
+        <p class="compare-value">${mUnsub!==null?mUnsub.toFixed(3)+'%':'—'}</p>
+        <p class="compare-delta">${deltaHtml(mUnsub,baseline.unsub,3,true)}</p>
+        <p class="compare-delta" style="font-size:11px;color:var(--color-text-tertiary)">Baseline: ${baseline.unsub!==null?baseline.unsub.toFixed(3)+'%':'—'}</p>
+      </div>
+    </div>`;
+}
+
+function renderTable(entries) {
+  const tbody=document.getElementById('issueTableBody');
+  if(!entries.length){tbody.innerHTML='<tr><td colspan="8" class="empty">No entries match this filter</td></tr>';return;}
+  const slotLabel={HL:'Headline',F1:'Featured 1',F2:'Featured 2'};
+  tbody.innerHTML=entries.slice(0,500).map(e=>{
+    const g=e.group;
+    const badge=g==='A'?`<span class="badge badge-a">${groupName('A')}</span>`:g==='B'?`<span class="badge badge-b">${groupName('B')}</span>`:'<span class="badge badge-unmatched">Unmatched</span>';
+    return `<tr>
+      <td>${e.issueId}</td>
+      <td title="${e.newsletter}">${e.newsletter}</td>
+      <td>${e.sendDate?e.sendDate.toISOString().slice(0,10):'—'}</td>
+      <td><span class="badge-slot">${slotLabel[e.slot]}</span></td>
+      <td title="${e.cta}">${e.cta||'—'}</td>
+      <td>${badge}</td>
+      <td>${e.clickPct!==null?e.clickPct.toFixed(2)+'%':'—'}</td>
+      <td>${e.unsubPct!==null?e.unsubPct.toFixed(3)+'%':'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function showTab(name) {
+  ['overview','performance','search','table'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===name?'':'none';
+  });
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes(name)));
+  const entries=getFilteredEntries();
+  if(name==='overview') renderOverview(entries);
+  else if(name==='performance') renderPerformance(entries);
+  else if(name==='search') renderSearch(entries);
+  else renderTable(entries);
+}
+
+// --- Parsing ---
+function parsePct(val) {
+  if(val===null||val===undefined||val===''||val==='---') return null;
+  const raw=String(val);
+  const n=parseFloat(raw.replace('%','').trim());
+  if(isNaN(n)) return null;
+  if(!raw.includes('%')&&Math.abs(n)<2) return parseFloat((n*100).toFixed(4));
+  return n;
+}
+function parseDate(val) {
+  if(!val||val==='---') return null;
+  const s=String(val).trim();
+  const m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return new Date(parseInt(m[1]),parseInt(m[2])-1,parseInt(m[3]));
+  const d=new Date(s);
+  return isNaN(d)?null:d;
+}
+function isSponsored(val) {
+  const s=String(val||'').trim();
+  return s!==''&&s!=='---'&&s!=='-'&&s!=='undefined'&&s!=='null';
+}
+
+function processCSV(results) {
+  const rows=results.data;
+  const debugEl=document.getElementById('debugPanel');
+  debugEl.style.display='block';
+  if(!rows.length){debugEl.innerHTML='<strong>Error:</strong> CSV contained no rows.';return;}
+
+  const headers=rows[0].map(h=>h.trim());
+  function col(name){return headers.findIndex(h=>h.toLowerCase().includes(name.toLowerCase()));}
+
+  const iIssueId =col('Issue ID');
+  const iNL      =col('Newsletter Name');
+  const iSendTime=col('Send Initiated');
+  const iHLClick =col('Headline Sponsorship Click Pct');
+  const iF1Click =col('Featured Sponsorship 1 Click Pct');
+  const iF2Click =col('Featured Sponsorship 2 Click Pct');
+  const iUnsub   =col('Unsubscribed Pct');
+  const iHLAcct  =col('Headline Sponsor AZoIntel Account ID');
+  const iF1Acct  =col('Featured Sponsor 1 AZoIntel Account ID');
+  const iF2Acct  =col('Featured Sponsor 2 AZoIntel Account ID');
+  const iHLCTA   =col('Headline CTA Text');
+  const iF1CTA   =col('Featured Sponsor 1 CTA Text');
+  const iF2CTA   =col('Featured Sponsor 2 CTA Text');
+
+  issueData=rows.slice(1).filter(r=>r.length>1).map(r=>{
+    const hlCTA=iHLCTA>=0?(r[iHLCTA]||'').trim():'';
+    const f1CTA=iF1CTA>=0?(r[iF1CTA]||'').trim():'';
+    const f2CTA=iF2CTA>=0?(r[iF2CTA]||'').trim():'';
+    return {
+      issueId:   iIssueId>=0?r[iIssueId]:'',
+      newsletter:iNL>=0?r[iNL]:'',
+      sendDate:  iSendTime>=0?parseDate(r[iSendTime]):null,
+      unsubPct:  iUnsub>=0?parsePct(r[iUnsub]):null,
+      hlCTA, f1CTA, f2CTA,
+      hlGroup:   classifyCTA(hlCTA),
+      f1Group:   classifyCTA(f1CTA),
+      f2Group:   classifyCTA(f2CTA),
+      hlClickPct: iHLClick>=0?parsePct(r[iHLClick]):null,
+      f1ClickPct: iF1Click>=0?parsePct(r[iF1Click]):null,
+      f2ClickPct: iF2Click>=0?parsePct(r[iF2Click]):null,
+      hasHL: iHLAcct>=0&&isSponsored(r[iHLAcct]),
+      hasF1: iF1Acct>=0&&isSponsored(r[iF1Acct]),
+      hasF2: iF2Acct>=0&&isSponsored(r[iF2Acct]),
+    };
+  }).filter(r=>r.hasHL||r.hasF1||r.hasF2||r.hlCTA||r.f1CTA||r.f2CTA);
+
+  const withDate=issueData.filter(r=>r.sendDate!==null);
+  const sampleRows=rows.slice(1,4).map((r,i)=>`<tr>
+    <td style="padding:3px 8px">${i+1}</td>
+    <td style="padding:3px 8px"><code style="font-size:10px">${r[iSendTime]||'—'}</code></td>
+    <td style="padding:3px 8px"><code style="font-size:10px">${issueData[i]?(issueData[i].sendDate?issueData[i].sendDate.toISOString().slice(0,10):'null'):'n/a'}</code></td>
+    <td style="padding:3px 8px"><code style="font-size:10px">${r[iHLCTA]||'—'}</code></td>
+    <td style="padding:3px 8px"><code style="font-size:10px">raw:${r[iHLClick]||'?'} → ${issueData[i]&&issueData[i].hlClickPct!==null?issueData[i].hlClickPct.toFixed(3)+'%':'null'}</code></td>
+    <td style="padding:3px 8px"><code style="font-size:10px">raw:${r[iF1Click]||'?'} → ${issueData[i]&&issueData[i].f1ClickPct!==null?issueData[i].f1ClickPct.toFixed(3)+'%':'null'}</code></td>
+  </tr>`).join('');
+
+  debugEl.innerHTML=`
+    <strong>CSV loaded:</strong> ${issueData.length} sponsored issues, ${headers.length} columns.<br>
+    <strong>Issues with parsed send date:</strong> ${withDate.length}<br><br>
+    <strong>Sample (first 3 sponsored rows):</strong>
+    <table style="font-size:11px;border-collapse:collapse;width:100%;margin-top:6px">
+      <tr style="color:var(--color-text-secondary)">
+        <th style="padding:3px 8px;text-align:left">#</th>
+        <th style="padding:3px 8px;text-align:left">Raw date</th>
+        <th style="padding:3px 8px;text-align:left">Parsed</th>
+        <th style="padding:3px 8px;text-align:left">Headline CTA</th>
+        <th style="padding:3px 8px;text-align:left">HL click rate</th>
+        <th style="padding:3px 8px;text-align:left">F1 click rate</th>
+      </tr>${sampleRows}
+    </table><br>
+    <button onclick="document.getElementById('debugPanel').style.display='none'" style="font-size:12px;padding:4px 10px;cursor:pointer;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary)">Dismiss</button>`;
+
+  const newsletters=[...new Set(issueData.map(r=>r.newsletter).filter(Boolean))].sort();
+  document.getElementById('nlFilter').innerHTML='<option value="">All newsletters</option>'+
+    newsletters.map(n=>`<option value="${n}">${n}</option>`).join('');
+
+  document.getElementById('dashContent').style.display='';
+  const pathEl=document.getElementById('filePath');
+  pathEl.textContent=lastFile?lastFile.name:'File loaded';
+  pathEl.classList.add('loaded');
+  document.getElementById('reloadBtn').style.display='';
+  document.getElementById('snapshotBtn').style.display='';
+  renderKeywords('A');
+  renderKeywords('B');
+  renderBlacklist();
+  render();
+}
+
+let lastFile=null;
+
+function loadFile(file) {
+  if(!file) return;
+  lastFile=file;
+  Papa.parse(file,{complete:processCSV,skipEmptyLines:true});
+}
+
+function reloadCSV() {
+  if(lastFile) Papa.parse(lastFile,{complete:processCSV,skipEmptyLines:true});
+}
+
+function cleanIssueDataForSnapshot() {
+  return issueData.map(r => {
+    const cleaned = { ...r };
+    if (isBlacklisted(cleaned.hlCTA)) {
+      cleaned.hlCTA = '';
+      cleaned.hlGroup = 'none';
+      cleaned.hlClickPct = null;
+      cleaned.hasHL = false;
+    }
+    if (isBlacklisted(cleaned.f1CTA)) {
+      cleaned.f1CTA = '';
+      cleaned.f1Group = 'none';
+      cleaned.f1ClickPct = null;
+      cleaned.hasF1 = false;
+    }
+    if (isBlacklisted(cleaned.f2CTA)) {
+      cleaned.f2CTA = '';
+      cleaned.f2Group = 'none';
+      cleaned.f2ClickPct = null;
+      cleaned.hasF2 = false;
+    }
+    return cleaned;
+  }).filter(r => r.hasHL || r.hasF1 || r.hasF2 || r.hlCTA || r.f1CTA || r.f2CTA);
+}
+
+function saveSnapshot() {
+  const cleanedData = cleanIssueDataForSnapshot();
+  const dataJson = JSON.stringify(cleanedData);
+  const fileName = (lastFile ? lastFile.name.replace(/\.csv$/i,'') : 'snapshot') + '-snapshot.html';
+
+  // Fetch the original HTML source (works when opened as file:// or http://)
+  fetch(location.href)
+    .then(r => r.text())
+    .then(src => {
+      doDownload(src, dataJson, fileName);
+    })
+    .catch(() => {
+      // fetch blocked (e.g. some browsers restrict file:// fetch)
+      // Fall back: read the live DOM source carefully
+      const src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      doDownload(src, dataJson, fileName);
+    });
+}
+
+function doDownload(src, dataJson, fileName) {
+  // We use base64 to avoid any escaping issues with the JSON payload.
+  const b64 = btoa(unescape(encodeURIComponent(dataJson)));
+  const injection = 'window.__SNAPSHOT__ = JSON.parse(decodeURIComponent(escape(atob("' + b64 + '"))));';
+
+  // Replace the marker comment in the source.
+  // We split the marker string dynamically to avoid matching it inside this function's source code.
+  const marker = '/*' + 'SNAPSHOT_INJECT' + '*/';
+  const snapped = src.replace(marker, injection);
+  const blob = new Blob([snapped], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = fileName;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function loadSnapshotData() {
+  if (!window.__SNAPSHOT__) return false;
+  issueData = window.__SNAPSHOT__;
+  issueData.forEach(r => { r.sendDate = r.sendDate ? new Date(r.sendDate) : null; });
+  reclassify();
+  const newsletters = [...new Set(issueData.map(r=>r.newsletter).filter(Boolean))].sort();
+  document.getElementById('nlFilter').innerHTML = '<option value="">All newsletters</option>' +
+    newsletters.map(n=>`<option value="${n}">${n}</option>`).join('');
+  document.getElementById('dashContent').style.display = '';
+  document.querySelector('.file-bar').style.display = 'none';
+  const blacklistCard = document.getElementById('blacklistCard');
+  if (blacklistCard) blacklistCard.style.display = 'none';
+  const debugEl = document.getElementById('debugPanel');
+  debugEl.innerHTML = '';
+  debugEl.style.display = 'none';
+  renderKeywords('A');
+  renderKeywords('B');
+  renderBlacklist();
+  render();
+  return true;
+}
+
+document.getElementById('csvInput').addEventListener('change', e => {
+  loadFile(e.target.files[0]);
+});
+
+['periodFilter','nlFilter','groupFilter'].forEach(id => {
+  document.getElementById(id).addEventListener('change', render);
+});
+
+/*SNAPSHOT_INJECT*/
+// Boot: load snapshot data if present, otherwise wait for CSV
+if (!loadSnapshotData()) {
+  // nothing to do — file bar awaits user input
+}
+</script>
+</body>
+</html>
