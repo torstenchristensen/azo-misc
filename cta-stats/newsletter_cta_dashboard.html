@@ -41,11 +41,14 @@
       --color-border-secondary: rgba(0, 0, 0, 0.22);
 
       /* Group colours */
-      --group-a: #c45840;
-      /* Ember */
-      --group-b: #527a2e;
-      /* Moss  */
+      --group-a: #e24b4a;
+      --group-b: #639922;
       --group-unmatched: #888780;
+
+      /* Slot colours */
+      --color-slot-hl: #378add;
+      --color-slot-f1: #ba7517;
+      --color-slot-f2: #d4537e;
 
       /* Unchanged layout tokens */
       --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -80,6 +83,16 @@
         /* Borders */
         --color-border-tertiary: rgba(255, 255, 255, 0.09);
         --color-border-secondary: rgba(255, 255, 255, 0.20);
+
+        /* Group colours (dark mode optimized) */
+        --group-a: #f09595;
+        --group-b: #97c459;
+        --group-unmatched: #a09990;
+
+        /* Slot colours (dark mode optimized) */
+        --color-slot-hl: #7db5e8;
+        --color-slot-f1: #d4a04a;
+        --color-slot-f2: #f472b6;
       }
     }
 
@@ -928,7 +941,17 @@
     }
 
     // --- Utilities ---
-    const COLORS = { A: '#E24B4A', B: '#639922', unmatched: '#888780' };
+    function getCSSVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+    const COLORS = {
+      get A() { return getCSSVar('--group-a'); },
+      get B() { return getCSSVar('--group-b'); },
+      get unmatched() { return getCSSVar('--group-unmatched'); },
+      get slotHL() { return getCSSVar('--color-slot-hl'); },
+      get slotF1() { return getCSSVar('--color-slot-f1'); },
+      get slotF2() { return getCSSVar('--color-slot-f2'); }
+    };
     let charts = {};
     function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
     function makeChart(id, config) { destroyChart(id); charts[id] = new Chart(document.getElementById(id), config); }
@@ -977,9 +1000,9 @@
       });
       const pieOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
       makeChart('pieAll', { type: 'doughnut', data: { labels: [gAN, gBN, 'Unmatched'], datasets: [{ data: [gc.A || 0, gc.B || 0, gc.unmatched || 0], backgroundColor: [COLORS.A, COLORS.B, COLORS.unmatched], borderWidth: 0 }] }, options: pieOpts });
-      makeChart('pieSlot', { type: 'doughnut', data: { labels: ['Headline', 'Featured 1', 'Featured 2'], datasets: [{ data: [sc.HL || 0, sc.F1 || 0, sc.F2 || 0], backgroundColor: ['#378ADD', '#BA7517', '#D4537E'], borderWidth: 0 }] }, options: pieOpts });
+      makeChart('pieSlot', { type: 'doughnut', data: { labels: ['Headline', 'Featured 1', 'Featured 2'], datasets: [{ data: [sc.HL || 0, sc.F1 || 0, sc.F2 || 0], backgroundColor: [COLORS.slotHL, COLORS.slotF1, COLORS.slotF2], borderWidth: 0 }] }, options: pieOpts });
       makeLegend('pieAllLegend', [{ color: COLORS.A, label: `${gAN} (${gc.A || 0})` }, { color: COLORS.B, label: `${gBN} (${gc.B || 0})` }, { color: COLORS.unmatched, label: `Unmatched (${gc.unmatched || 0})` }]);
-      makeLegend('pieSlotLegend', [{ color: '#378ADD', label: `Headline (${sc.HL || 0})` }, { color: '#BA7517', label: `Featured 1 (${sc.F1 || 0})` }, { color: '#D4537E', label: `Featured 2 (${sc.F2 || 0})` }]);
+      makeLegend('pieSlotLegend', [{ color: COLORS.slotHL, label: `Headline (${sc.HL || 0})` }, { color: COLORS.slotF1, label: `Featured 1 (${sc.F1 || 0})` }, { color: COLORS.slotF2, label: `Featured 2 (${sc.F2 || 0})` }]);
 
       const byMonth = {};
       entries.forEach(e => {
@@ -1322,6 +1345,11 @@
 
     ['periodFilter', 'nlFilter', 'groupFilter'].forEach(id => {
       document.getElementById(id).addEventListener('change', render);
+    });
+
+    // Re-render when prefers-color-scheme changes so charts update colors dynamically
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      render();
     });
 
     /*SNAPSHOT_INJECT*/
